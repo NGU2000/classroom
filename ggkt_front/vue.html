@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <input type = "text" v-bind:value="message">
+        <br>
+        {{message}}
+        </br>
+        <input type = "text" v-model:value="message">
+        <br>
+        <input type="button" value = "b1" @click="search()"/>
+        </br>
+        <input type="button" value = "b1" v-on:click="search()"/>
+        <input type = "checkbox" v-model="ok"/>
+        <h1 v-if="ok">选中了</h1>
+        <h1 v-else>没有选中了</h1>
+        <table>
+            <tr v-for="(user,index) in userlist">
+                <td>{{index}}</td>
+                <td>{{user.id}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.phonenum}}</td>
+            </tr>
+        </table>
+        <p>
+            <router-link to="/">首页</router-link>
+            <router-link to ="/student">会员管理</router-link>
+            <router-link to ="/teacher">讲师管理</router-link>
+        </p>
+        <router-view></router-view>
+        <atguigu></atguigu>
+        <table border="1">
+            <tr>
+                <td>id</td>
+                <td>姓名</td>
+            </tr>
+            <tr v-for="item in memberList">
+                <td>{{item.memberId}}</td>
+                <td>{{item.memberL}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <script src = "vue.min.js"></script>
+    <script src = "vue-router.min.js">z</script>
+    <script src ="axios.min.js"></script>
+
+    <!-- 路由 -->
+    <script>
+        const welcome = {template:'<div>欢迎</div>'}
+        const student = {template:'<div>student list</div>'}
+        const teacher = {template:'<div>teacher list</div>'}
+
+        const routes = [
+            {path: '/',redirect:'/welcome'},
+            {path:'/welcome', component:welcome},
+            {path:'/student', component:student},
+            {path:'/teacher', component:teacher}
+        ]
+
+        const router = new VueRouter({routes})
+        const app = new Vue({
+            el:"#app",
+            //数据
+            data:{
+                memerList:[],
+                message:'Hello Vue',
+                ok:false,
+                userlist:[
+                    {id:1,name:'jason',phonenum:'12314'},
+                    {id:2,name:'jason',phonenum:'12311'},
+                    {id:3,name:'jason',phonenum:'12312'},
+                ]
+            },
+            created(){
+                this.getList()
+            },
+            //方法
+            methods:{
+                search(){
+                    console.log('default msg');
+                },
+                getList(id) {
+                      //vm = this
+                    axios.get('../data.json')
+                    .then(response => {
+                        console.log(response)
+                        this.memberList = response.data.data.items
+                    })
+                    .catch(error => {
+                      console.log(error)
+                })
+                }
+            },
+            //组件
+            components:{
+                'atguigu':{
+                    template: '<ul><li>首页</li><li>学员管理</li></ul>'
+                }
+            },
+            router
+        })
+    </script>
+</body>
+</html>
